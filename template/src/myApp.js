@@ -9,7 +9,12 @@ var MyLayer = cc.Layer.extend({
         //////////////////////////////
         // 1. super init first
         this._super();
-
+        // 用来装子弹的数组
+        this._bullets = [];
+        // 获得游戏可视的尺寸
+        var winSize = cc.director.getWinSize();
+        // 获取屏幕坐标原点
+        var origin = cc.director.getVisibleOrigin();
         /////////////////////////////
         // 2. add a menu item with "X" image, which is clicked to quit the program
         //    you may modify it.
@@ -92,8 +97,10 @@ var MyLayer = cc.Layer.extend({
     notRepeat: function() {
       /*var winSize =cc.Director.getInstance().getWinSize();
       var origin = cc.Director.getInstance().getVisibleOrigin();*/
-      var winSize =cc.Director.getInstance().getWinSize();
-      var origin = cc.Director.getInstance().getWinSizeInPixels();
+        // 获得游戏可视的尺寸
+        var winSize = cc.director.getWinSize();
+        // 获取屏幕坐标原点
+        var origin = cc.director.getVisibleOrigin();
 
       /*var size = cc.Director.getInstance().getWinSize();*/
       /*var sizePx = cc.Director.getInstance().getWinSizeInPixels();*/
@@ -103,7 +110,8 @@ var MyLayer = cc.Layer.extend({
       var bulletDuration = 1;
 
       // 创建一个子弹
-      var bullet = cc.Sprite.create(zidan,cc.rect(66,237,7,20));
+      var bullet = new cc.Sprite(zidan);
+      //new cc.Sprite(s_HelloWorld);
 
       // 根据飞机的位置，初始化子弹的位置
       bullet.setPosition(cc.p(planePosition.x,planePosition.y+bullet.getContentSize().height));
