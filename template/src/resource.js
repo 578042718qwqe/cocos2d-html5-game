@@ -3,6 +3,7 @@ var s_CloseNormal = "CloseNormal.png";
 var s_CloseSelected = "CloseSelected.png";
 var s_CloseSelected_2 = "feiji.png";
 var zidan = "zidan.png";
+var diji = "diji.png";
 
 var g_resources = [
     //image
@@ -10,7 +11,8 @@ var g_resources = [
     s_CloseNormal,
     s_CloseSelected,
     s_CloseSelected_2,
-    zidan
+    zidan,
+    diji
 
     //plist
 

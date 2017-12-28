@@ -3,6 +3,7 @@ var MyLayer = cc.Layer.extend({
     sprite:null,
     soa:null,
     _bullets:null,
+    _targets:null,
 
     init:function () {
         console.log("执行");
@@ -11,6 +12,8 @@ var MyLayer = cc.Layer.extend({
         this._super();
         // 用来装子弹的数组
         this._bullets = [];
+        // 用来装敌机
+        this._targets = [];
         // 获得游戏可视的尺寸
         var winSize = cc.director.getWinSize();
         // 获取屏幕坐标原点
@@ -53,6 +56,8 @@ var MyLayer = cc.Layer.extend({
 
         //每5秒执行一次，无次数限制
       this.schedule(this.notRepeat,0.2);
+        // 添加增加敌机的定时器
+        this.schedule(this.addTarget,0.4);
 
       var listener1 = cc.EventListener.create({//添加点击移动飞机
         event: cc.EventListener.TOUCH_ONE_BY_ONE,
@@ -94,7 +99,7 @@ var MyLayer = cc.Layer.extend({
 
 
     },
-    notRepeat: function() {
+    notRepeat: function() {//监视移动
       /*var winSize =cc.Director.getInstance().getWinSize();
       var origin = cc.Director.getInstance().getVisibleOrigin();*/
         // 获得游戏可视的尺寸
@@ -130,7 +135,7 @@ var MyLayer = cc.Layer.extend({
 
       this._bullets.push(bullet);
       this.addChild(bullet,0);
-      cc.log("每5秒执行一次");
+      cc.log("每0.2秒执行一次");
     },
     spriteMoveFinished:function(sprite){
       // 将元素移除出Layer
@@ -142,6 +147,52 @@ var MyLayer = cc.Layer.extend({
           this._bullets.splice(index, 1);
         }
       }
+    },
+    //添加敌机
+    addTarget:function(){
+
+        var target = new cc.Sprite(diji);
+        target.setTag(1);
+
+        var winSize = cc.director.getWinSize();
+
+        // 设置敌机随机出现的X轴的值
+        var minX = target.getContentSize().width/2;
+        var maxX = winSize.width - target.getContentSize().width/2;
+        var rangeX = maxX - minX;
+        var actualX = Math.random() * rangeX + minX;
+        // 在一定范围内随机敌机的速度
+        var minDuration = 2.5;
+        var maxDuration = 4;
+        var rangeDuration = maxDuration - minDuration;
+        var actualDuration = Math.random() * rangeDuration + minDuration;
+
+        target.setPosition(cc.p(actualX, winSize.height + target.getContentSize().height/2));
+
+        var actionMove = cc.MoveTo.create(actualDuration ,cc.p(actualX, 0 - target.getContentSize().height));
+        var actionMoveDone = cc.CallFunc.create(this.spriteMoveFinished,this);
+
+        target.runAction(cc.Sequence.create(actionMove,actionMoveDone));
+
+        this.addChild(target,1);
+        this._targets.push(target);
+    },
+    spriteMoveFinished:function(sprite){
+        // 将元素移除出Layer
+        this.removeChild(sprite, true);
+        if(sprite.getTag()==1){
+            // 把目标从数组中移除
+            var index = this._targets.indexOf(sprite);
+            if (index > -1) {
+                this._targets.splice(index, 1);
+            }
+        } else if(sprite.getTag()==6){
+            // 把子弹从数组中移除
+            var index = this._bullets.indexOf(sprite);
+            if (index > -1) {
+                this._bullets.splice(index, 1);
+            }
+        }
     }
 });
 
