@@ -1,9 +1,9 @@
-var s_HelloWorld = "HelloWorld.jpg";
-var s_CloseNormal = "CloseNormal.png";
-var s_CloseSelected = "CloseSelected.png";
-var s_CloseSelected_2 = "feiji.png";
-var zidan = "zidan.png";
-var diji = "diji.png";
+var s_HelloWorld = "../HD/HelloWorld.jpg";
+var s_CloseNormal = "../HD/CloseNormal.png";
+var s_CloseSelected = "../HD/CloseSelected.png";
+var s_CloseSelected_2 = "../HD/feiji.png";
+var zidan = "../HD/zidan.png";
+var diji = "../HD/diji.png";
 
 var g_resources = [
     //image
