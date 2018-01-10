@@ -1,12 +1,12 @@
 var MyLayer = cc.Layer.extend({
     helloLabel:null,
-    sprite:null,
-    soa:null,
-    _bullets:null,
-    _targets:null,
+    sprite:null,//背景
+    soa:null,//飞机
+    _bullets:null,//子弹
+    _targets:null,//敌机
 
     init:function () {
-        console.log("执行");
+        console.log("执行脚本");
         //////////////////////////////
         // 1. super init first
         this._super();
@@ -55,11 +55,13 @@ var MyLayer = cc.Layer.extend({
         this.addChild(this.soa);
 
         //每5秒执行一次，无次数限制
-      this.schedule(this.notRepeat,0.2);
+      this.schedule(this.notRepeat,1);
         // 添加增加敌机的定时器
       this.schedule(this.addTarget,0.4);
       // 添加碰撞检测，不加第二个参数，默认为每帧执行一次
       this.schedule(this.updateGame);
+        // 添加碰撞检测，不加第二个参数，默认为每帧执行一次
+      this.schedule(this.updatediji);
 
       var listener1 = cc.EventListener.create({//添加点击移动飞机
         event: cc.EventListener.TOUCH_ONE_BY_ONE,
@@ -137,7 +139,6 @@ var MyLayer = cc.Layer.extend({
 
       this._bullets.push(bullet);
       this.addChild(bullet,0);
-      cc.log("每0.2秒执行一次");
     },
     spriteMoveFinished:function(sprite){
       // 将元素移除出Layer
@@ -217,6 +218,62 @@ var MyLayer = cc.Layer.extend({
                 if(cc.rectIntersectsRect(bulletRect,targetRect)){
                     // 碰撞则将子弹加入待删除列表
                     bullets2Delete.push(bullet);
+                }
+            }
+            // 如果待删除的子弹数组的内容大于零，说明敌机碰到了子弹，将敌机加入待删除数组
+            if(bullets2Delete.length > 0){
+                targets2Delete.push(target);
+            }
+
+            //删除发生碰撞的每个子弹
+            for(i in bullets2Delete){
+                var bullet = bullets2Delete[ i ];
+                var index = this._bullets.indexOf(bullet);
+                if (index > -1) {
+                    this._bullets.splice(index, 1);
+                }
+                this.removeChild(bullet);
+            }
+
+            bullets2Delete = null;
+        }
+        //删除发生碰撞的每个敌机
+        for( i in targets2Delete){
+            var target = targets2Delete[ i ];
+
+            var index = this._targets.indexOf(target);
+            if (index > -1) {
+                this._targets.splice(index, 1);
+            }
+
+            this.removeChild(target);
+        }
+
+        targets2Delete = null;
+
+    },
+    //碰撞敌机
+    updatediji:function(){
+        var targets2Delete = [];
+
+        var i ;
+        //遍历屏幕上的每个敌机
+        for( i in this._targets ){
+            //console.log("targetIterator");
+            var target = this._targets[ i ];
+            // 获得敌机的碰撞矩形
+            var targetRect = target.getBoundingBox();
+
+            var bullets2Delete = [];
+            // 对于每个敌机，遍历每个屏幕上的子弹，判断是否碰撞
+            var soa = this.soa;
+            for(i in this._bullets){
+                var bullet = this._bullets[ i ];
+                var soaRect = soa.getBoundingBox();
+                // 判断两个矩形是否碰撞
+                if(cc.rectIntersectsRect(soaRect,targetRect)){
+                    // 碰撞则将子弹加入待删除列表
+                    bullets2Delete.push(soaRect);
                 }
             }
             // 如果待删除的子弹数组的内容大于零，说明敌机碰到了子弹，将敌机加入待删除数组
